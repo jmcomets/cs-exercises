@@ -1,3 +1,4 @@
+import operator as op
 import itertools as it
 
 class BinaryTree(object):
@@ -61,6 +62,10 @@ class BinaryTreeNode(object):
         self.right = None
 
 class BinarySearchTree(BinaryTree):
+    def __init__(self, comp=op.lt):
+        super().__init__()
+        self.comp = comp
+
     def search(self, key):
         """Search for the given key in this tree, returning None if it wasn't
         found. Works on an empty tree.
@@ -74,9 +79,9 @@ class BinarySearchTree(BinaryTree):
         """
         if node is None:
             return None
-        if key < node.key:
+        if self.comp(key, node.key):
             return self.search(key, node.left)
-        elif node.key < key:
+        elif self.comp(node.key, key):
             return self.search(key, node.right)
         else:
             return node
@@ -102,7 +107,7 @@ class BinarySearchTree(BinaryTree):
         """
         if node is None:
             return BinaryTreeNode(key, None, None)
-        if key < node.key:
+        if self.comp(key, node.key):
             node.left = self.insert_at(key, node.left)
         else:
             node.right = self.insert_at(key, node.right)
@@ -113,7 +118,9 @@ class BinarySearchTree(BinaryTree):
         self.root = self.insert_at(key, self.root)
 
     def min(self, node=None):
-        """Returns the node containing the smallest key in the current tree."""
+        """Returns the node containing the smallest key in the current tree,
+        starting at the given node (defaults to the root of the tree).
+        """
         if node is None:
             node = self.root
         if node is None:
@@ -121,7 +128,9 @@ class BinarySearchTree(BinaryTree):
         return next(self.in_order_traversal())
 
     def max(self, node=None):
-        """Returns the node containing the largest key in the current tree."""
+        """Returns the node containing the largest key in the current tree,
+        starting at the given node (defaults to the root of the tree).
+        """
         if node is None:
             node = self.root
         if node is None:

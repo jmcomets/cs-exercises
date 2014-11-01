@@ -1,5 +1,6 @@
 import operator as op
 from heaps import heapify_raw, sift_down
+from binary_trees import BinarySearchTree
 
 def heapsort(array, reverse=False):
     # sort an array in place using the heapsort algorithm
@@ -63,3 +64,11 @@ def mergesort(array, reverse=False):
     # sort an array using the quicksort algorithm, returning a sorted array
     comp = op.gt if reverse else op.lt
     return mergesort_raw(array, comp)
+
+def treesort(array, reverse=False):
+    # sort an array using a binary tree insertion algorithm
+    comp = op.gt if reverse else op.lt
+    tree = BinarySearchTree(comp)
+    for elem in array:
+        tree.insert(elem)
+    return list(map(lambda n: n.key, tree.in_order_traversal()))
