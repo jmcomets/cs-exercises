@@ -34,3 +34,32 @@ def quicksort(array, reverse=False):
     # sort an array in place using the quicksort algorithm
     comp = op.gt if reverse else op.lt
     quicksort_raw(array, comp, 0, len(array) - 1)
+
+def mergesort_merge(left_array, right_array, comp):
+    # merge two arrays according to the mergesort method
+    merged_array = []
+    while len(left_array) > 0 or len(right_array) > 0:
+        if len(left_array) > 0 and len(right_array) > 0:
+            if comp(left_array[0], right_array[0]):
+                merged_array.append(left_array.pop(0))
+            else:
+                merged_array.append(right_array.pop(0))
+        elif len(left_array) > 0:
+            merged_array.append(left_array.pop(0))
+        elif len(right_array) > 0:
+            merged_array.append(right_array.pop(0))
+    return merged_array
+
+def mergesort_raw(array, comp):
+    # sort an array using the quicksort algorithm, returning a sorted array
+    if len(array) <= 1:
+        return array
+    middle = len(array) // 2
+    left_array = mergesort_raw(array[:middle], comp)
+    right_array = mergesort_raw(array[middle:], comp)
+    return mergesort_merge(left_array, right_array, comp)
+
+def mergesort(array, reverse=False):
+    # sort an array using the quicksort algorithm, returning a sorted array
+    comp = op.gt if reverse else op.lt
+    return mergesort_raw(array, comp)
