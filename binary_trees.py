@@ -113,9 +113,45 @@ class BinarySearchTree(BinaryTree):
             node.right = self.insert_at(key, node.right)
         return node
 
-    def insert(self, key):
-        """Insert the given key in the tree, starting at the root of course."""
-        self.root = self.insert_at(key, self.root)
+    def insert(self, *keys):
+        """Insert the given keys in the tree, starting at the root."""
+        for key in keys:
+            self.root = self.insert_at(key, self.root)
+
+    def _replace_in_parent(self, parent, node, new_node):
+        if parent is not None:
+            if node == parent.left:
+                parent.left = new_node
+            elif node == parent.right:
+                parent.right = new_node
+            else:
+                raise ValueError('node to replace should be a direct child')
+
+    def delete_at(self, key, node, parent=None):
+        if node is None:
+            return
+        if key < node.key:
+            self.delete_at(key, node.left, node)
+        elif key > node.key:
+            self.delete_at(key, node.right, node)
+        else:
+            if node.left is not None and node.right is not None:
+                repl, repl_parent = node.right, node
+                while repl.left is not None:
+                    repl, repl_parent = repl.left, repl
+                node.key = repl.key
+                self.delete_at(repl.key, repl, repl_parent)
+            elif node.left is not None:
+                self._replace_in_parent(parent, node, node.left)
+            elif node.right is not None:
+                self._replace_in_parent(parent, node, node.right)
+            else:
+                self._replace_in_parent(parent, node, None)
+
+    def delete(self, *keys):
+        """Delete the given keys from the tree, starting at the root."""
+        for key in keys:
+            self.delete_at(key, self.root)
 
     def min(self, node=None):
         """Returns the node containing the smallest key in the current tree,
@@ -125,7 +161,7 @@ class BinarySearchTree(BinaryTree):
             node = self.root
         if node is None:
             return None
-        return next(self.in_order_traversal())
+        return next(self.in_order_traversal(node))
 
     def max(self, node=None):
         """Returns the node containing the largest key in the current tree,
@@ -135,7 +171,4 @@ class BinarySearchTree(BinaryTree):
             node = self.root
         if node is None:
             return None
-        return next(self.in_order_traversal(reverse=True))
-
-    def delete(self, key):
-        raise NotImplementedError
+        return next(self.in_order_traversal(node, reverse=True))
