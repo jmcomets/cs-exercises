@@ -2,6 +2,7 @@ import operator as op
 import itertools as it
 
 class BinaryTree(object):
+    """Simple binary tree, holds the interface for travesal of nodes."""
     def __init__(self):
         self.root = None
 
@@ -56,15 +57,86 @@ class BinaryTree(object):
         yield from self.traversal((1, 2, 0), node)
 
 class BinaryTreeNode(object):
+    """Simple binary tree node, having only a left and a right child, as well
+    as its key.
+    """
     def __init__(self, key, left=None, right=None):
         self.key = key
-        self.left = None
-        self.right = None
+        self.left = left
+        self.right = right
+
+class BinaryTreeNodeWithParent(BinaryTreeNode):
+    """Binary tree node maintaining a relationship with its parent (using
+    therefore more memory).
+    """
+    def __init__(self, *args, **kwargs):
+        """Careful here: properties must be setup before calling super method,
+        otherwise the parent logic won't be maintained seamlessly.
+        """
+        self.parent = None
+        self._left = None
+        self._right = None
+        super().__init__(*args, **kwargs)
+
+    def get_left(self):
+        # left getter
+        return self._left
+
+    def get_right(self):
+        # right getter
+        return self._right
+
+    def set_left(self, node):
+        # left setter
+        if self._left is not None:
+            self._left.parent = None
+        if node is not None:
+            node.parent = self
+        self._left = node
+
+    def set_right(self, node):
+        # right setter
+        if self._right is not None:
+            self._right.parent = None
+        if node is not None:
+            node.parent = self
+        self._right = node
+
+    left = property(get_left, set_left, doc='Left child property')
+    right = property(get_right, set_right, doc='Right child property')
 
 class BinarySearchTree(BinaryTree):
-    def __init__(self, comp=op.lt):
+    """Binary search tree, just list a binary tree, only insertion is
+    deterministic due to implicit ordering. Keys are ordered left-to-right,
+    using the given comparing function (defaults to "<" operator).
+
+    Edge cases:
+        - inserting multiple equal keys inserts multiple nodes
+        - deletion of a key which is present more than once only deletes a
+          single node, this can be solved either by enforcing the handling of
+          multiple keys or forcing the presence of a single equal key (not
+          implemented)
+
+    Usage example:
+    >>> from binary_trees import BinarySearchTree
+    >>> tree = BinarySearchTree()
+    >>> tree.insert(4, 2)
+    >>> tree.insert(1, 3, 3, 7)
+    >>> for node in tree.in_order_traversal():
+    ...     print(node.key)
+    ...
+    1
+    2
+    3
+    3
+    4
+    7
+    """
+    def __init__(self, keys=(), comp=op.lt):
         super().__init__()
         self.comp = comp
+        for key in keys:
+            self.insert(key)
 
     def search(self, key):
         """Search for the given key in this tree, returning None if it wasn't
