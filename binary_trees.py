@@ -2,9 +2,23 @@ import operator as op
 import itertools as it
 
 class BinaryTree(object):
-    """Simple binary tree, holds the interface for travesal of nodes."""
+    """Simple binary tree, holds the interface for all binary trees (traversal,
+    height, etc...).
+    """
     def __init__(self):
         self.root = None
+
+    def height_from(self, node):
+        """Return the height of the subtree starting at the given node, which
+        is the maximum depth of the left and right subsubtrees + 1.
+        """
+        if node is None:
+            return 0
+        return 1 + max(self.height_from(node.left), self.height_from(node.right))
+
+    def height(self):
+        """Return the height of the whole tree (starting at the root)."""
+        return self.height_from(self.root)
 
     def traversal_from(self, node, order):
         """Recursively traverse the given node following the given order.
@@ -138,6 +152,12 @@ class BinarySearchTree(BinaryTree):
         for key in keys:
             self.insert(key)
 
+    def make_node(self, key, left=None, right=None):
+        """Build a node using the default node class, in this case
+        BinaryTreeNode.
+        """
+        return BinaryTreeNode(key, left, right)
+
     def search(self, key):
         """Search for the given key in this tree, returning None if it wasn't
         found. Works on an empty tree.
@@ -178,7 +198,7 @@ class BinarySearchTree(BinaryTree):
         current node.
         """
         if node is None:
-            return BinaryTreeNode(key, None, None)
+            return self.make_node(key)
         if self.comp(key, node.key):
             node.left = self.insert_at(key, node.left)
         else:
