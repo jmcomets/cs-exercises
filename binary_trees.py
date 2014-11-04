@@ -134,8 +134,9 @@ class BinarySearchTree(BinaryTree):
     Usage example:
     >>> from binary_trees import BinarySearchTree
     >>> tree = BinarySearchTree()
-    >>> tree.insert(4, 2)
-    >>> tree.insert(1, 3, 3, 7)
+    >>> nodes = []
+    >>> nodes += tree.insert(4, 2)
+    >>> nodes += tree.insert(1, 3, 3, 7)
     >>> for node in tree.in_order_traversal():
     ...     print(node.key)
     ...
@@ -197,18 +198,29 @@ class BinarySearchTree(BinaryTree):
         feel adventurous, you can give a node from another tree. Returns the
         current node.
         """
-        if node is None:
-            return self.make_node(key)
         if self.comp(key, node.key):
-            node.left = self.insert_at(key, node.left)
+            if node.left is None:
+                node.left = self.make_node(key)
+                return node.left
+            else:
+                return self.insert_at(key, node.left)
         else:
-            node.right = self.insert_at(key, node.right)
-        return node
+            if node.right is None:
+                node.right = self.make_node(key)
+                return node.right
+            else:
+                return self.insert_at(key, node.right)
 
     def insert(self, *keys):
         """Insert the given keys in the tree, starting at the root."""
+        nodes = []
         for key in keys:
-            self.root = self.insert_at(key, self.root)
+            if self.root is None:
+                self.root = self.make_node(key)
+                nodes.append(self.root)
+            else:
+                nodes.append(self.insert_at(key, self.root))
+        return nodes
 
     def _replace_in_parent(self, parent, node, new_node):
         if parent is not None:
@@ -239,6 +251,10 @@ class BinarySearchTree(BinaryTree):
                 self._replace_in_parent(parent, node, node.right)
             else:
                 self._replace_in_parent(parent, node, None)
+                if node == self.root:
+                    if parent is not None:
+                        print(parent.key)
+                    self.root = None
 
     def delete(self, *keys):
         """Delete the given keys from the tree, starting at the root."""
@@ -294,3 +310,14 @@ class AVLTree(BinarySearchTree):
     def rebalance(self, node):
         """Rebalance the tree after insertion."""
         raise NotImplementedError
+
+if __name__ == '__main__':
+    tree = BinarySearchTree()
+    nodes = []
+    nodes += tree.insert(4, 2)
+    nodes += tree.insert(1, 3, 3, 7)
+    print(tree.root.key)
+    for node in tree.in_order_traversal():
+        print('Delete', node.key)
+        tree.delete(node.key)
+    print(tree.root.key)
