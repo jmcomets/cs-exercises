@@ -264,3 +264,33 @@ class BinarySearchTree(BinaryTree):
         if node is None:
             return None
         return next(self.in_order_traversal(node, reverse=True))
+
+class AVLTree(BinarySearchTree):
+    """AVL Tree, a balanced binary search tree."""
+    def make_node(self, key, left=None, right=None):
+        """Build a node using the default node class, in this case
+        BinaryTreeNodeWithParent.
+        """
+        return BinaryTreeNodeWithParent(key, left, right)
+
+    def balance_factor_from(self, node):
+        """Compute the balance factor given a start node. None nodes have a
+        factor of 0.
+        """
+        if node is None:
+            return 0
+        return self.height(node.left) - self.height(node.right)
+
+    def balance_factor(self, node=None):
+        return self.balance_factor(self.root)
+
+    def insert(self, key):
+        """Insert the given keys in the tree, starting at the root. Rebalance
+        the tree afterwards, in order to keep the AVL property.
+        """
+        node = super().insert(key)
+        self.rebalance(node)
+
+    def rebalance(self, node):
+        """Rebalance the tree after insertion."""
+        raise NotImplementedError
