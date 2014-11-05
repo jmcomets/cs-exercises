@@ -3,7 +3,8 @@ import itertools as it
 
 class BinaryTree(object):
     """Simple binary tree, holds the interface for all binary trees (traversal,
-    height, etc...).
+    height, etc...). Note that traversal while modification is undefined
+    behaviour, and modifying the nodes on your own as well.
     """
     def __init__(self):
         self.root = None
@@ -308,14 +309,3 @@ class AVLTree(BinarySearchTree):
     def rebalance(self, node):
         """Rebalance the tree after insertion."""
         raise NotImplementedError
-
-if __name__ == '__main__':
-    tree = BinarySearchTree()
-    nodes = []
-    nodes += tree.insert(4, 2)
-    nodes += tree.insert(1, 3, 3, 7)
-    print(tree.root.key)
-    for node in tree.in_order_traversal():
-        print('Delete', node.key)
-        tree.delete(node.key)
-    print(tree.root.key)
