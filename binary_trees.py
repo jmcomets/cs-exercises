@@ -212,7 +212,11 @@ class BinarySearchTree(BinaryTree):
                 return self.insert_at(key, node.right)
 
     def insert(self, *keys):
-        """Insert the given keys in the tree, starting at the root."""
+        """Insert the given keys in the tree, starting at the root. Return
+        either a list or a single node if only one element was inserted.
+        """
+        if not keys:
+            raise ValueError('At least one key should be given to insert')
         nodes = []
         for key in keys:
             if self.root is None:
@@ -220,6 +224,8 @@ class BinarySearchTree(BinaryTree):
                 nodes.append(self.root)
             else:
                 nodes.append(self.insert_at(key, self.root))
+        if len(nodes) == 1:
+            return nodes[0]
         return nodes
 
     def _replace_in_parent(self, parent, node, new_node):
