@@ -309,3 +309,7 @@ class AVLTree(BinarySearchTree):
     def rebalance(self, node):
         """Rebalance the tree after insertion."""
         raise NotImplementedError
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
