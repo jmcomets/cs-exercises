@@ -1,9 +1,12 @@
 import unittest
 from binary_trees import BinarySearchTree
 
-class InsertionTest(unittest.TestCase):
+class BinarySearchTreeTest(unittest.TestCase):
     def setUp(self):
         self.tree_class = BinarySearchTree
+
+class InsertionTest(BinarySearchTreeTest):
+    """Tests handling the insert() interface exposed by BinarySearchTree."""
 
     def test_root_insertion(self):
         """Insert a root in an empty tree. The root should be modified."""
@@ -109,3 +112,6 @@ class InsertionTest(unittest.TestCase):
         # no insertions should raise a ValueError
         with self.assertRaises(ValueError):
             tree.insert()
+
+class DeleteTest(BinarySearchTreeTest):
+    """Tests handling the delete() interface exposed by BinarySearchTree."""
