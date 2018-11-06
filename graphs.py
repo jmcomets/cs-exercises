@@ -34,8 +34,9 @@ def astar(node, neighbors, transition_cost, heuristic, is_goal=lambda node: Fals
             return rebuild_path(predecessor_map, node)
 
         for neighbor in neighbors(node):
+            old_neighbor_cost = cost_map.get(neighbor)
             neighbor_cost = cost_map[node] + transition_cost(node, neighbor)
-            if neighbor_cost < cost_map.get(neighbor, float('infinity')):
+            if old_neighbor_cost is None or neighbor_cost < old_neighbor_cost:
                 predecessor_map[neighbor] = node
                 cost_map[neighbor] = neighbor_cost
                 heapq.heappush(to_visit, min_scored(neighbor))
